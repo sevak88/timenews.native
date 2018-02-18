@@ -1,0 +1,19 @@
+<H1>Routes<H1>
+<code>
+    /{language}/get/news/page/{page:\d+}/[{except}]
+    /{language}/get/news/images/page/{page:\d+}/[{except}]
+    /{language}/get/news/category/{category}/page/{page:\d+}/[{except}]
+    /{language}/get/news/images/category/{category}/page/{page:\d+}/[{except}]
+    /{language}/get/news/search/{search}/page/{page:\d+}/[{except}]
+    /{language}/get/news/images/search/{search}/page/{page:\d+}/[{except}]
+    /{language}/get/news/date/{date}/page/{page:\d+}/[{except}]
+    /{language}/get/news/images/date/{date}/page/{page:\d+}
+    /{language}/get/categories
+    /{language}/get/menu_categories
+    /{language}/get/original_content/{uid}
+    /{language}/get/locations
+    /{language}/get/weather/{location}
+    /{language}/get/sites
+    /{language}/get/rates
+    /{language}/get/configs;
+<cod>
