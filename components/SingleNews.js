@@ -16,6 +16,11 @@ export default class SingleNews extends Component {
         console.warn(this.state.newsSource)
     }
 
+
+    getNewsBody = () =>{
+
+    }
+
     render() {
         const { onScroll = () => {} } = this.props;
         return (

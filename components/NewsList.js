@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Image, StyleSheet, ListView, FlatList } from 'react-native';
+import { Image, StyleSheet, ListView, FlatList, View, TouchableOpacity } from 'react-native';
 import { Container, Header, Content, List, ListItem,  Text, Body, Item, Button, Input, Icon, SwipeRow, Left, Right } from 'native-base';
 import SingleNews from "./SingleNews";
 
@@ -42,9 +42,11 @@ export default class NewsList extends Component {
 
 
     shoSingleNews = (data) =>{
-        this.props.navigation.navigate('SingleNews',{
+
+        console.warn(data)
+        /*this.props.navigation.navigate('SingleNews',{
             data
-        })
+        })*/
     };
 
 
@@ -67,30 +69,35 @@ export default class NewsList extends Component {
                     <FlatList
                         data={this.state.newsList}
                         renderItem={({item}) =>
-                            <SwipeRow avatar onPress={() => this.shoSingleNews(item)}
+                            <SwipeRow
+                                style={{paddingBottom:0, paddingTop:0, paddingLeft:0, paddingRight:0, marginTop:2}}
                                 leftOpenValue={75}
                                 rightOpenValue={-75}
-                                key={item.uid}
                                 left ={
-                                    <Button success>
+                                    <Button success style={{marginTop:2, marginBottom:2}}>
                                         <Icon active name="add"/>
                                     </Button>
                                 }
                                 body={
-                                    <Content >
-                                        <Image source={{uri: item.enclosureUrl}} style={{width: 100, height: 50}}/>
-                                        <Body>
-                                        <Text numberOfLines={2} style={styles.title}>{item.title}</Text>
-                                        <Text note>{item.timeString} {item.site}</Text>
-                                        </Body>
-                                    </Content>
+                                    <View>
+                                        <ListItem avatar style={{ paddingBottom:5, paddingTop:5, paddingLeft:5, marginLeft:0}} onPress={() => this.shoSingleNews(item)}>
+                                            <Image source={{uri: item.enclosureUrl}} style={{width: 150, height: 75, marginRight:5}}/>
+                                            <View>
+                                                <Text numberOfLines={2} style={styles.title}>{item.title}</Text>
+                                                <Text note>{item.timeString} {item.site}</Text>
+                                            </View>
+
+                                        </ListItem>
+                                    </View>
                                 }
                                 right={
-                                    <Button danger>
+                                    <Button danger style={{marginTop:2, marginBottom:2}}>
                                         <Icon active name="trash"/>
                                     </Button>
                                 }
                             />}
+                        keyExtractor={(item, index) => index}
+
                     />
 
                 </Content>
