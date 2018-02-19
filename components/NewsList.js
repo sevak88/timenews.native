@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
-import { Image, StyleSheet } from 'react-native';
-import { Container, Header, Content, List, ListItem,  Text, Body, Item, Button, Input, Icon } from 'native-base';
+import { Image, StyleSheet, ListView, FlatList } from 'react-native';
+import { Container, Header, Content, List, ListItem,  Text, Body, Item, Button, Input, Icon, SwipeRow, Left, Right } from 'native-base';
+import SingleNews from "./SingleNews";
+
 export default class NewsList extends Component {
 
     constructor(props){
@@ -12,6 +14,8 @@ export default class NewsList extends Component {
 
 
         this.getNews();
+
+
     }
 
     getNews = () => {
@@ -30,12 +34,22 @@ export default class NewsList extends Component {
             });
     };
 
+
+
     appendNewsList = () => {
         console.warn("end")
-    }
+    };
+
+
+    shoSingleNews = (data) =>{
+        this.props.navigation.navigate('SingleNews',{
+            data
+        })
+    };
 
 
     render() {
+
         return (
             <Container>
                 <Header searchBar rounded>
@@ -49,18 +63,36 @@ export default class NewsList extends Component {
                     </Button>
                 </Header>
                 <Content>
-                    <List dataArray={this.state.newsList} onEndReached={this.appendNewsList}
-                        renderRow={(item) =>
-                            <ListItem avatar>
-                                <Image  source={{uri: item.enclosureUrl}} style={{width: 100, height: 50}} />
-                                <Body>
-                                    <Text style={styles.title}>{item.title}</Text>
-                                    <Text note>{item.timeString} {item.site}</Text>
-                                </Body>
-                            </ListItem>
-                        }
-                    >
-                    </List>
+
+                    <FlatList
+                        data={this.state.newsList}
+                        renderItem={({item}) =>
+                            <SwipeRow avatar onPress={() => this.shoSingleNews(item)}
+                                leftOpenValue={75}
+                                rightOpenValue={-75}
+                                key={item.uid}
+                                left ={
+                                    <Button success>
+                                        <Icon active name="add"/>
+                                    </Button>
+                                }
+                                body={
+                                    <Content >
+                                        <Image source={{uri: item.enclosureUrl}} style={{width: 100, height: 50}}/>
+                                        <Body>
+                                        <Text numberOfLines={2} style={styles.title}>{item.title}</Text>
+                                        <Text note>{item.timeString} {item.site}</Text>
+                                        </Body>
+                                    </Content>
+                                }
+                                right={
+                                    <Button danger>
+                                        <Icon active name="trash"/>
+                                    </Button>
+                                }
+                            />}
+                    />
+
                 </Content>
             </Container>
         );

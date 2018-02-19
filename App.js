@@ -1,33 +1,36 @@
 import React, {Component} from 'react';
-import {
-    Platform,
-    StyleSheet,
-    Text,
-    Image,
-    View
-} from 'react-native';
-import logo from './assets/logo-rss.png';
+import { Platform, StyleSheet, Text, Image, View} from 'react-native';
+import { StackNavigator  } from 'react-navigation';
 
 import NewsList from "./components/NewsList";
-
-const instructions = Platform.select({
-    ios: 'Press Cmd+R to reload,\n' +
-    'Cmd+D or shake for dev menu',
-    android: 'Double tap R on your keyboard to reload,\n' +
-    'Shake or press menu button for dev menu',
-});
+import SingleNews from "./components/SingleNews";
 
 type Props = {};
+const  AppNavigator = StackNavigator({
+    NewsList: {
+        screen: NewsList,
+    },
+    SingleNews: {
+        screen: SingleNews,
+    },
+},
+{
+    headerMode: 'none',
+    navigationOptions: {
+        headerVisible: false,
+    }
+});
+
 export default class App extends Component<Props> {
     render() {
         return (
             <View style={styles.container}>
-                <NewsList/>
-
+               <AppNavigator/>
             </View>
         );
     }
 }
+
 
 const styles = StyleSheet.create({
     container: {
