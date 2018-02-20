@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Image, StyleSheet, ListView, FlatList, View, TouchableOpacity } from 'react-native';
-import { Container, Header, Content, List, ListItem,  Text, Body, Item, Button, Input, Icon, SwipeRow, Left, Right } from 'native-base';
+import { Container, Header, Content, List, ListItem,  Text, Body, Item, Button, Input, Icon, SwipeRow, Left, Right, Spinner } from 'native-base';
 import SingleNews from "./SingleNews";
 
 export default class NewsList extends Component {
@@ -25,7 +25,7 @@ export default class NewsList extends Component {
             .then((responseJson) => {
                 if(responseJson.success){
                     this.setState({
-                        newsList:responseJson.payload.items
+                        newsList:this.state.newsList.concat(responseJson.payload.items)
                     })
                 }
             })
@@ -37,16 +37,18 @@ export default class NewsList extends Component {
 
 
     appendNewsList = () => {
-        console.warn("end")
+        this.setState({
+            page: ++this.state.page
+        });
+        this.getNews();
+        //console.warn(this.state.newsList.length)
     };
 
 
     shoSingleNews = (data) =>{
-
-        console.warn(data)
-        /*this.props.navigation.navigate('SingleNews',{
+        this.props.navigation.navigate('SingleNews',{
             data
-        })*/
+        })
     };
 
 
@@ -67,6 +69,12 @@ export default class NewsList extends Component {
                 <Content>
 
                     <FlatList
+                        ListFooterComponent={
+                            <Spinner />
+                        }
+
+                        onEndReachedThreshold={0.5}
+                        onEndReached={() => this.appendNewsList()}
                         data={this.state.newsList}
                         renderItem={({item}) =>
                             <SwipeRow
@@ -79,16 +87,19 @@ export default class NewsList extends Component {
                                     </Button>
                                 }
                                 body={
-                                    <View>
-                                        <ListItem avatar style={{ paddingBottom:5, paddingTop:5, paddingLeft:5, marginLeft:0}} onPress={() => this.shoSingleNews(item)}>
+                                    <Container style={{height:85}}>
+                                        <Item avatar style={{ paddingBottom:5, paddingTop:5, paddingLeft:5, marginLeft:0}} onPress={() => this.shoSingleNews(item)}>
                                             <Image source={{uri: item.enclosureUrl}} style={{width: 150, height: 75, marginRight:5}}/>
-                                            <View>
-                                                <Text numberOfLines={2} style={styles.title}>{item.title}</Text>
-                                                <Text note>{item.timeString} {item.site}</Text>
-                                            </View>
+                                            <Content>
+                                                <Text numberOfLines={3} style={styles.title}>{item.title}</Text>
 
-                                        </ListItem>
-                                    </View>
+                                                <Text note>{item.timeString} {item.site}</Text>
+
+                                            </Content>
+
+
+                                        </Item>
+                                    </Container>
                                 }
                                 right={
                                     <Button danger style={{marginTop:2, marginBottom:2}}>
