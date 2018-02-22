@@ -12,8 +12,6 @@ export default class SingleNews extends Component {
             }).cloneWithRows([props.navigation.state.params.item])
 
         }
-
-        console.warn(this.state.newsSource)
     }
 
 

@@ -1,15 +1,19 @@
 import React, {Component} from 'react';
 import { Platform, StyleSheet, Text, Image, View} from 'react-native';
+import { StyleProvider } from 'native-base';
 import { StackNavigator  } from 'react-navigation';
+import getTheme from './native-base-theme/components';
+import material from './native-base-theme/variables/material';
 
-import NewsList from "./components/NewsList";
+//import NewsList from "./components/NewsList";
 import SingleNews from "./components/SingleNews";
+import NewsListsScreen from "./components/NewsListsScreen";
 
 
 type Props = {};
 const  AppNavigator = StackNavigator({
-    NewsList: {
-        screen: NewsList,
+    NewsListsScreen: {
+        screen: NewsListsScreen,
     },
     SingleNews: {
         screen: SingleNews,
@@ -25,9 +29,11 @@ const  AppNavigator = StackNavigator({
 export default class App extends Component<Props> {
     render() {
         return (
-            <View style={styles.container}>
-               <AppNavigator/>
-            </View>
+            <StyleProvider style={getTheme(material)}>
+                <View style={styles.container}>
+                    <AppNavigator/>
+                </View>
+            </StyleProvider>
         );
     }
 }

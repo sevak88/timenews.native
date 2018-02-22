@@ -16,9 +16,15 @@ import {
     Left,
     Right,
     Spinner,
-    Thumbnail
+    Thumbnail,
+    Form,
+    Picker
 } from 'native-base';
-import SingleNews from "./SingleNews";
+
+import SingleNews from "./../SingleNews";
+
+
+
 
 export default class NewsList extends Component {
 
@@ -33,10 +39,43 @@ export default class NewsList extends Component {
             error: null,
             refreshing: false
         };
+
+
     }
 
     componentDidMount() {
-        this.makeRemoteRequest();
+        this.props.navigation.addListener(
+            'willFocus',
+            payload => {
+                if(this.state.data.length === 0) {
+                    this.setState({
+                        loading: false,
+                        data: [],
+                        page: 1,
+                        seed: 1,
+                        error: null,
+                        refreshing: false
+                    });
+                    this.makeRemoteRequest();
+                }
+            }
+        );
+
+
+        /*this.props.navigation.addListener(
+            'willBlur',
+            payload => {
+                this.setState({
+                    loading: false,
+                    data: [],
+                    page: 1,
+                    seed: 1,
+                    error: null,
+                    refreshing: false
+                });
+            }
+        );*/
+
     }
 
     makeRemoteRequest = () => {
@@ -75,6 +114,14 @@ export default class NewsList extends Component {
     };
 
     handleLoadMore = () => {
+        if(this.state.page === 1){
+            this.setState(
+                {
+                    page: this.state.page + 1
+                }
+            );
+            return;
+        }
         this.setState(
             {
                 page: this.state.page + 1
@@ -94,7 +141,18 @@ export default class NewsList extends Component {
     };
 
     renderHeader = () => {
-        return <Header placeholder="Type Here..." lightTheme round/>;
+        return (
+            <Header searchBar rounded>
+            <Item>
+                <Icon name="ios-search" />
+                <Input placeholder="Search" />
+                <Icon name="ios-people" />
+            </Item>
+            <Button transparent>
+                <Text>Search</Text>
+            </Button>
+        </Header>
+        );
     };
 
     renderFooter = () => {
@@ -114,7 +172,7 @@ export default class NewsList extends Component {
     };
 
     showItem = (item) =>{
-        this.props.navigation.navigate(
+        this.props.screenProps.appNavigator.navigate(
             'SingleNews',
             {item}
         )
@@ -140,7 +198,7 @@ export default class NewsList extends Component {
                     ListFooterComponent={this.renderFooter}
                     onRefresh={this.handleRefresh}
                     refreshing={this.state.refreshing}
-                    //onEndReached={this.handleLoadMore}
+                    onEndReached={this.handleLoadMore}
                     onEndReachedThreshold={0.5}
                 />
 

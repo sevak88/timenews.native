@@ -12,7 +12,6 @@
     "react": "16.2.0",
     "react-native": "0.53.0",
     "react-native-parallax-scroll-view": "^0.20.1",
-    "react-native-ultimate-listview": "^3.3.0",
     "react-navigation": "^1.0.3"
   },
   "devDependencies": {
