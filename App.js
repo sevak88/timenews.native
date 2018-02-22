@@ -5,6 +5,7 @@ import { StackNavigator  } from 'react-navigation';
 import NewsList from "./components/NewsList";
 import SingleNews from "./components/SingleNews";
 
+
 type Props = {};
 const  AppNavigator = StackNavigator({
     NewsList: {
@@ -37,7 +38,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         //alignItems: 'center',
-        //backgroundColor: '#009688'
+        backgroundColor: '#FFFFFF'
     },
     logo:{
         resizeMode: 'cover',

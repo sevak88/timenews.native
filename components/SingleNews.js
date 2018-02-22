@@ -9,7 +9,7 @@ export default class SingleNews extends Component {
         this.state = {
             newsSource: new ListView.DataSource({
                 rowHasChanged: (r1, r2) => r1 !== r2
-            }).cloneWithRows([props.navigation.state.params.data])
+            }).cloneWithRows([props.navigation.state.params.item])
 
         }
 
@@ -36,6 +36,7 @@ export default class SingleNews extends Component {
                         onScroll={onScroll}
 
                         headerBackgroundColor="#333"
+                        backgroundColor="#009688"
                         stickyHeaderHeight={ STICKY_HEADER_HEIGHT }
                         parallaxHeaderHeight={ PARALLAX_HEADER_HEIGHT }
                         backgroundSpeed={10}
@@ -55,11 +56,10 @@ export default class SingleNews extends Component {
 
                         renderForeground={() => (
                             <View key="parallax-header" style={ styles.parallaxHeader }>
-
-                                <Text style={ styles.sectionSpeakerText }>
+                                <Text style={ styles.sectionSpeakerText } numberOfLines={4}>
                                     {this.state.newsSource._dataBlob.s1[0].title}
                                 </Text>
-                                <Text style={ styles.sectionTitleText }>
+                                <Text style={ styles.sectionTitleText } >
                                     {this.state.newsSource._dataBlob.s1[0].timeString}
                                 </Text>
                             </View>
@@ -86,7 +86,7 @@ const window = Dimensions.get('window');
 const AVATAR_SIZE = 120;
 const ROW_HEIGHT = 60;
 const PARALLAX_HEADER_HEIGHT = 250;
-const STICKY_HEADER_HEIGHT = 70;
+const STICKY_HEADER_HEIGHT = 60;
 
 const styles = StyleSheet.create({
     container: {
@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
     stickySection: {
         height: STICKY_HEADER_HEIGHT,
         justifyContent: 'flex-end',
-        backgroundColor: '#009688'
+        backgroundColor:'transparent'
     },
     stickySectionText: {
         color: 'white',
@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
     },
     fixedSection: {
 
-        backgroundColor: '#009688'
+
     },
     fixedSectionText: {
         color: '#999',
@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         flex: 1,
         flexDirection: 'column',
-        paddingTop: 100
+        paddingTop: 50
     },
     avatar: {
         marginBottom: 10,
