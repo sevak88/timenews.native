@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import  { Dimensions, StyleSheet, Image, View, Text, ListView } from 'react-native';
-import { Container, Header, Left, Body, Right, Button, Icon, Title,Content } from 'native-base';
+import  { Dimensions, StyleSheet, Image, View, Text, ListView, Picker, WebView } from 'react-native';
+import { Container, Header, Left, Body, Right, Button, Icon, Title,Content, Item, Form, Tabs, Tab } from 'native-base';
 import ParallaxScrollView from 'react-native-parallax-scroll-view';
 export default class SingleNews extends Component {
 
@@ -9,14 +9,35 @@ export default class SingleNews extends Component {
         this.state = {
             newsSource: new ListView.DataSource({
                 rowHasChanged: (r1, r2) => r1 !== r2
-            }).cloneWithRows([props.navigation.state.params.item])
-
+            }).cloneWithRows([props.navigation.state.params.item]),
+            language: "ru",
+            content:""
         }
     }
 
+    componentWillMount() {
+        this.getNewsBody();
+    };
 
     getNewsBody = () =>{
+        const url = 'http://api.timenews.org/ru/get/original_content/' + this.props.navigation.state.params.item.uid;
+        this.setState({loading: true});
 
+        fetch(url)
+            .then(res => res.json())
+            .then(res => {
+
+                const content =  res.payload.items[0].original_content ;
+                this.setState({
+                    content: "<h1>asdasdasd</h1>",
+                    loading: false,
+                    refreshing: false
+                });
+                console.warn(this.state)
+            })
+            .catch(error => {
+                this.setState({error, loading: false});
+            });
     }
 
     render() {
@@ -27,7 +48,19 @@ export default class SingleNews extends Component {
                 style={styles.container}
                 dataSource={ this.state.newsSource }
                 renderRow={(rowData) => (
-                    <Text>dd</Text>
+                    <Container>
+                        <Tabs initialPage={0}>
+                            <Tab heading="Tab1">
+
+                            </Tab>
+                            <Tab heading="Tab2">
+                                <Text>tab1</Text>
+                            </Tab>
+                            <Tab heading="Tab3">
+                                <Text>tab1</Text>
+                            </Tab>
+                        </Tabs>
+                    </Container>
                 )}
                 renderScrollComponent={props => (
                     <ParallaxScrollView
@@ -64,13 +97,20 @@ export default class SingleNews extends Component {
                         )}
 
                         renderStickyHeader={() => (
-                            <Header key="sticky-header" style={styles.stickySection}>
-                                <Button transparent onPress={() => this.props.navigation.goBack()}>
-                                    <Icon name='arrow-back' />
-                                </Button>
+                            <Header key="sticky-header">
+                                <Left>
+                                    <Button transparent onPress={() => this.props.navigation.goBack()}>
+                                        <Icon name='arrow-back' />
+                                    </Button>
+                                </Left>
                                 <Body>
-                                    <Text numberOfLines ={1} style={styles.stickySectionText}>{this.state.newsSource._dataBlob.s1[0].title}</Text>
+                                    <Title numberOfLines ={1} style={styles.stickySectionText}>{this.state.newsSource._dataBlob.s1[0].title}</Title>
                                 </Body>
+                                <Right>
+                                    <Button transparent>
+                                        <Icon name='more' />
+                                    </Button>
+                                </Right>
                             </Header>
                         )}/>
                 )}

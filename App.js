@@ -7,13 +7,13 @@ import material from './native-base-theme/variables/material';
 
 //import NewsList from "./components/NewsList";
 import SingleNews from "./components/SingleNews";
-import NewsListsScreen from "./components/NewsListsScreen";
+import NewsList from "./components/NewsList/NewsList";
 
 
 type Props = {};
 const  AppNavigator = StackNavigator({
-    NewsListsScreen: {
-        screen: NewsListsScreen,
+    NewsList: {
+        screen: NewsList,
     },
     SingleNews: {
         screen: SingleNews,

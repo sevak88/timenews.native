@@ -21,12 +21,13 @@ import {
     Picker
 } from 'native-base';
 
+import {OptimizedFlatList} from 'react-native-optimized-flatlist'
 import SingleNews from "./../SingleNews";
 
 
 
 
-export default class NewsList extends Component {
+export default class NewsList extends React.Component {
 
     constructor(props) {
         super(props);
@@ -43,40 +44,19 @@ export default class NewsList extends Component {
 
     }
 
-    componentDidMount() {
-        this.props.navigation.addListener(
-            'willFocus',
-            payload => {
-                if(this.state.data.length === 0) {
-                    this.setState({
-                        loading: false,
-                        data: [],
-                        page: 1,
-                        seed: 1,
-                        error: null,
-                        refreshing: false
-                    });
-                    this.makeRemoteRequest();
-                }
-            }
-        );
-
-
-        /*this.props.navigation.addListener(
-            'willBlur',
-            payload => {
-                this.setState({
-                    loading: false,
-                    data: [],
-                    page: 1,
-                    seed: 1,
-                    error: null,
-                    refreshing: false
-                });
-            }
-        );*/
-
+    shouldComponentUpdate(nextProps, nextState) {
+        if(this.state.data.length === nextState.data.length) {
+            return false;
+        }
+        return true
     }
+
+    componentDidMount() {
+        this.makeRemoteRequest();
+    };
+
+
+
 
     makeRemoteRequest = () => {
         console.log("start loading page: " + this.state.page)
@@ -87,7 +67,7 @@ export default class NewsList extends Component {
         fetch(url)
             .then(res => res.json())
             .then(res => {
-                console.log("end loading page: " + this.state.page)
+                console.log("end loading page: " + this.state.page);
                 this.setState({
                     data: page === 1 ? res.payload.items : [...this.state.data, ...res.payload.items],
                     error: res.error || null,
@@ -114,14 +94,6 @@ export default class NewsList extends Component {
     };
 
     handleLoadMore = () => {
-        if(this.state.page === 1){
-            this.setState(
-                {
-                    page: this.state.page + 1
-                }
-            );
-            return;
-        }
         this.setState(
             {
                 page: this.state.page + 1
@@ -146,7 +118,7 @@ export default class NewsList extends Component {
             <Item>
                 <Icon name="ios-search" />
                 <Input placeholder="Search" />
-                <Icon name="ios-people" />
+                <Icon name="options" />
             </Item>
             <Button transparent>
                 <Text>Search</Text>
@@ -172,36 +144,68 @@ export default class NewsList extends Component {
     };
 
     showItem = (item) =>{
-        this.props.screenProps.appNavigator.navigate(
+        this.props.navigation.navigate(
             'SingleNews',
             {item}
         )
-    }
+    };
+
+
+    _onPressItem = (id: string) => {
+        // updater functions are preferred for transactional updates
+        this.setState((state) => {
+            // copy the map rather than modifying state.
+            const selected = new Map(state.selected);
+            selected.set(id, !selected.get(id)); // toggle
+            return {selected};
+        });
+    };
+
+    _renderItem = ({item}) => (
+        <NewsItem
+            id={item.id}
+            onPressItem={this.showItem}
+            //selected={!!this.state.selected.get(item.id)}
+            item={item}
+        />
+    );
 
     render() {
         return (
 
-                <FlatList
+                <OptimizedFlatList
                     data={this.state.data}
-                    renderItem={({item}) => (
-                            <ListItem  avatar onPress={() => this.showItem(item)}>
-                                <Thumbnail square style={{width:100} }  source={{uri: item.enclosureUrl}} />
-                                <Body noBorder>
-                                    <Text style={{fontSize:12}} numberOfLines={2}>{item.title}</Text>
-                                    <Text note>{item.site}</Text>
-                                </Body>
-                            </ListItem>
-                    )}
-                    keyExtractor={item => item.email}
-                    ItemSeparatorComponent={this.renderSeparator}
+                    renderItem={this._renderItem}
+                    keyExtractor={item => item.id}
                     ListHeaderComponent={this.renderHeader}
                     ListFooterComponent={this.renderFooter}
                     onRefresh={this.handleRefresh}
                     refreshing={this.state.refreshing}
                     onEndReached={this.handleLoadMore}
-                    onEndReachedThreshold={0.5}
                 />
 
+        );
+    }
+}
+
+
+class NewsItem extends React.PureComponent {
+    _onPress = (item) => {
+        this.props.onPressItem(this.props.item);
+    };
+
+    render() {
+        return (
+            <ListItem  avatar onPress={() => this._onPress(this.props.item)}>
+                <Thumbnail square style={{width:100} }  source={{uri: this.props.item.enclosureUrl}} />
+                <Body noBorder>
+                <Text style={{fontSize:14}} numberOfLines={2}>{this.props.item.title}</Text>
+                <View style={{flex: 1, flexDirection: 'row'}}>
+                    <Text note style={{fontSize:10}}>{this.props.item.timeString}</Text>
+                    <Text note style={{fontSize:10}}>{this.props.item.site}</Text>
+                </View>
+                </Body>
+            </ListItem>
         );
     }
 }
