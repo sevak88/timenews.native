@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
-import  { Dimensions, StyleSheet, Image, View, Text, ListView, Picker, WebView } from 'react-native';
-import { Container, Header, Left, Body, Right, Button, Icon, Title,Content, Item, Form, Tabs, Tab } from 'native-base';
+import  { Dimensions, StyleSheet, Image, View, Text, ListView, Picker, WebView, ScrollView } from 'react-native';
+import { Container, Header, Left, Body, Right, Button, Icon, Title,Content, Item, Form, Tabs, Tab, Spinner } from 'native-base';
 import ParallaxScrollView from 'react-native-parallax-scroll-view';
+import HTML from 'react-native-render-html';
+
 export default class SingleNews extends Component {
 
     constructor(props){
@@ -15,8 +17,10 @@ export default class SingleNews extends Component {
         }
     }
 
-    componentWillMount() {
-        this.getNewsBody();
+    componentDidMount() {
+        if(!this.props.navigation.state.params.item.original_content){
+            this.getNewsBody();
+        }
     };
 
     getNewsBody = () =>{
@@ -26,14 +30,14 @@ export default class SingleNews extends Component {
         fetch(url)
             .then(res => res.json())
             .then(res => {
-
-                const content =  res.payload.items[0].original_content ;
+                this.props.navigation.state.params.item.original_content = res.payload.items[0].original_content;
                 this.setState({
-                    content: "<h1>asdasdasd</h1>",
+                    newsSource: new ListView.DataSource({
+                        rowHasChanged: (r1, r2) => r1 !== r2
+                    }).cloneWithRows([this.props.navigation.state.params.item]),
                     loading: false,
                     refreshing: false
                 });
-                console.warn(this.state)
             })
             .catch(error => {
                 this.setState({error, loading: false});
@@ -48,10 +52,14 @@ export default class SingleNews extends Component {
                 style={styles.container}
                 dataSource={ this.state.newsSource }
                 renderRow={(rowData) => (
-                    <Container>
                         <Tabs initialPage={0}>
-                            <Tab heading="Tab1">
-
+                            <Tab heading="Content" style={{margin:10}}>
+                                {rowData.original_content ?
+                                        <HTML
+                                            imagesMaxWidth={Dimensions.get('window').width}
+                                            tagsStyles={{img:{maxWidth:'100%'}, iframe:{maxWidth:'100%'}}}
+                                            html={rowData.original_content}/>
+                                : <Spinner/>}
                             </Tab>
                             <Tab heading="Tab2">
                                 <Text>tab1</Text>
@@ -60,7 +68,6 @@ export default class SingleNews extends Component {
                                 <Text>tab1</Text>
                             </Tab>
                         </Tabs>
-                    </Container>
                 )}
                 renderScrollComponent={props => (
                     <ParallaxScrollView

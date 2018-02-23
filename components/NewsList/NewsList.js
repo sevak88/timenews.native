@@ -38,7 +38,10 @@ export default class NewsList extends React.Component {
             page: 1,
             seed: 1,
             error: null,
-            refreshing: false
+            refreshing: false,
+            language: 'ru',
+            search: '',
+            action: '',
         };
 
 
@@ -52,6 +55,11 @@ export default class NewsList extends React.Component {
     }
 
     componentDidMount() {
+        if(!this.state.search) {
+            this.setState({
+                action: '/get/news/images/'
+            });
+        }
         this.makeRemoteRequest();
     };
 
@@ -61,7 +69,7 @@ export default class NewsList extends React.Component {
     makeRemoteRequest = () => {
         console.log("start loading page: " + this.state.page)
         const {page, seed} = this.state;
-        const url = 'http://api.timenews.org/ru/get/news/images/page/'+this.state.page+'/';
+        const url = 'http://api.timenews.org/' + this.state.language + this.state.action + 'page/' +this.state.page+'/';
         this.setState({loading: true});
 
         fetch(url)
@@ -78,6 +86,19 @@ export default class NewsList extends React.Component {
             .catch(error => {
                 this.setState({error, loading: false});
             });
+    };
+
+    onSearch = () => {
+        console.log(this.state.search);
+        this.setState({
+            loading: false,
+            data: [],
+            page: 1,
+            seed: 1,
+            error: null,
+            refreshing: false,
+            action: '/get/news/images/search/'+this.state.search+'/'
+        },() => this.makeRemoteRequest());
     };
 
     handleRefresh = () => {
@@ -112,15 +133,23 @@ export default class NewsList extends React.Component {
         );
     };
 
+    clearSearch = () =>{
+        this.setState({
+            search: ""
+        })
+    }
+
     renderHeader = () => {
         return (
             <Header searchBar rounded>
             <Item>
                 <Icon name="ios-search" />
-                <Input placeholder="Search" />
-                <Icon name="options" />
+                <Input placeholder="Search" onChangeText={(search) => this.setState({search})} onSubmitEditing={this.onSearch}/>
+
+                {this.state.search ? <Icon name="close"/> : <Icon name="options" />}
+
             </Item>
-            <Button transparent>
+            <Button transparent onPress={this.onSearch}>
                 <Text>Search</Text>
             </Button>
         </Header>
@@ -176,7 +205,7 @@ export default class NewsList extends React.Component {
                 <OptimizedFlatList
                     data={this.state.data}
                     renderItem={this._renderItem}
-                    keyExtractor={item => item.id}
+                    keyExtractor={item => item.id.toString()}
                     ListHeaderComponent={this.renderHeader}
                     ListFooterComponent={this.renderFooter}
                     onRefresh={this.handleRefresh}
