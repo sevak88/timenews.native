@@ -56,8 +56,10 @@ export default class SingleNews extends Component {
                             <Tab heading="Content" style={{margin:10}}>
                                 {rowData.original_content ?
                                         <HTML
+                                            debug={true}
+                                            staticContentMaxWidth={Dimensions.get('window').width}
                                             imagesMaxWidth={Dimensions.get('window').width}
-                                            tagsStyles={{img:{maxWidth:'100%'}, iframe:{maxWidth:'100%'}}}
+                                            tagsStyles={{img:{maxWidth:'100%'}}}
                                             html={rowData.original_content}/>
                                 : <Spinner/>}
                             </Tab>
@@ -97,9 +99,14 @@ export default class SingleNews extends Component {
                                 <Text style={ styles.sectionSpeakerText } numberOfLines={4}>
                                     {this.state.newsSource._dataBlob.s1[0].title}
                                 </Text>
-                                <Text style={ styles.sectionTitleText } >
-                                    {this.state.newsSource._dataBlob.s1[0].timeString}
-                                </Text>
+                                <View style={{flex: 1, flexDirection: 'row'}}>
+                                    <Text style={ styles.sectionTitleText } >
+                                        {this.state.newsSource._dataBlob.s1[0].timeString}
+                                    </Text>
+                                    <Text style={ styles.sectionTitleText } >
+                                        {this.state.newsSource._dataBlob.s1[0].site}
+                                    </Text>
+                                </View>
                             </View>
                         )}
 
@@ -182,7 +189,7 @@ const styles = StyleSheet.create({
     sectionTitleText: {
         color: 'white',
         fontSize: 12,
-        paddingVertical: 5
+        padding: 5
     },
     row: {
         overflow: 'hidden',

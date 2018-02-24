@@ -11,8 +11,10 @@
     "native-base": "^2.3.9",
     "react": "16.2.0",
     "react-native": "0.53.0",
+    "react-native-atoz-listview": "0.0.7",
     "react-native-optimized-flatlist": "^1.0.4",
     "react-native-parallax-scroll-view": "^0.20.1",
+    "react-native-popup-menu": "^0.12.2",
     "react-native-render-html": "^3.9.0",
     "react-navigation": "^1.0.3"
   },
