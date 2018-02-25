@@ -7,8 +7,7 @@ import {
     View,
     TouchableOpacity,
     TouchableHighlight,
-    ActivityIndicator,
-    AsyncStorage
+    ActivityIndicator
 } from 'react-native';
 import {
     Container,
@@ -43,8 +42,6 @@ import SearchBar from "./../SearchBar";
 import SingleNews from "./../SingleNews";
 import material from "../../native-base-theme/variables/material";
 
-import {saveItem, getNewsList} from './../../functions/savedNews'
-
 
 
 export default class NewsList extends React.Component {
@@ -59,7 +56,6 @@ export default class NewsList extends React.Component {
             error: null,
             refreshing: false,
             language: 'ru',
-            action: '',
         };
     }
 
@@ -75,61 +71,16 @@ export default class NewsList extends React.Component {
             this.setState({
                 loading: true,
                 data: [],
-                action: '/get/news/images/'
-            },() => this.makeRemoteRequest());
+            },() => this.getSavedNewsList());
         }
     };
 
 
-    makeRemoteRequest = () => {
-        const {page, seed} = this.state;
-        const url = 'http://api.timenews.org/' + this.state.language + this.state.action + 'page/' + this.state.page + '/';
-        this.setState({loading: true});
-        console.log(url);
-        fetch(url)
-            .then(res => res.json())
-            .then(res => {
-                this.setState({
-                    data: page === 1 ? res.payload.items : [...this.state.data, ...res.payload.items],
-                    error: res.error || null,
-                    loading: false,
-                    refreshing: false
-                });
-            })
-            .catch(error => {
-                this.setState({error, loading: false});
-            });
+    getSavedNewsList = () => {
+        //todo getting saved
     };
 
-    onSearch = (search) => {
-        if(search) {
-            this.setState({
-                loading: false,
-                data: [],
-                page: 1,
-                seed: 1,
-                error: null,
-                refreshing: false,
-                action: '/get/news/images/search/' + search + '/'
-            }, () => this.makeRemoteRequest());
-        }
-    };
-
-    onClearSearch = () =>{
-        if(this.state.action !== '/get/news/images/') {
-            this.setState({
-                loading: false,
-                data: [],
-                page: 1,
-                seed: 1,
-                error: null,
-                refreshing: false,
-                action: '/get/news/images/'
-            }, () => this.makeRemoteRequest());
-        }
-    };
-
-    onRefresh = () => {
+     onRefresh = () => {
         this.setState(
             {
                 page: 1,
@@ -138,7 +89,7 @@ export default class NewsList extends React.Component {
                 refreshing: true
             },
             () => {
-                this.makeRemoteRequest();
+                this.getSavedNewsList();
             }
         );
     };
@@ -149,7 +100,7 @@ export default class NewsList extends React.Component {
                 page: this.state.page + 1
             },
             () => {
-                this.makeRemoteRequest();
+                this.getSavedNewsList();
             }
         );
     };
@@ -203,18 +154,17 @@ export default class NewsList extends React.Component {
     render() {
         return (
             <Container>
-                <SearchBar onClearSearch={this.onClearSearch} onSearch={(search) => this.onSearch(search)}/>
                 <MenuProvider>
-                <OptimizedFlatList
-                    data={this.state.data}
-                    renderItem={this._renderItem}
-                    keyExtractor={item => item.id.toString()}
-                    ListHeaderComponent={this.renderHeader}
-                    ListFooterComponent={this.renderFooter}
-                    onRefresh={this.onRefresh}
-                    refreshing={this.state.refreshing}
-                    onEndReached={this.handleLoadMore}
-                />
+                    <OptimizedFlatList
+                        data={this.state.data}
+                        renderItem={this._renderItem}
+                        keyExtractor={item => item.id.toString()}
+                        ListHeaderComponent={this.renderHeader}
+                        ListFooterComponent={this.renderFooter}
+                        onRefresh={this.onRefresh}
+                        refreshing={this.state.refreshing}
+                        onEndReached={this.handleLoadMore}
+                    />
                 </MenuProvider>
             </Container>
 
@@ -226,14 +176,6 @@ export default class NewsList extends React.Component {
 class NewsItem extends React.PureComponent {
     _onPress = (item) => {
         this.props.onPressItem(this.props.item);
-    };
-
-    onSaveItem = (uid) =>{
-        saveItem(uid)
-    };
-
-    onShareItem = (uid) =>{
-        getNewsList()
     };
 
     render() {
@@ -254,11 +196,11 @@ class NewsItem extends React.PureComponent {
                             <Icon name="more" style={{padding:10}}/>
                         </MenuTrigger>
                         <MenuOptions>
-                            <MenuOption onSelect={() => this.onSaveItem(this.props.item.uid)} style={{flexDirection: 'row'}}>
+                            <MenuOption onSelect={() => alert(`Delete`)} style={{flexDirection: 'row'}}>
                                 <Icon name="bookmark" style={styles.menuIcon}/>
                                 <Text style={styles.menuText}>Save</Text>
                             </MenuOption>
-                            <MenuOption onSelect={() => this.onShareItem(this.props.item.uid)} style={{flexDirection: 'row'}}>
+                            <MenuOption onSelect={() => alert("Share")} style={{flexDirection: 'row'}}>
                                 <Icon name="share"  style={styles.menuIcon}/>
                                 <Text style={styles.menuText}>Share</Text>
                             </MenuOption>

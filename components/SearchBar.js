@@ -7,6 +7,7 @@ export default class SearchBar extends Component {
         this.state = {
             search: ''
         }
+
     }
 
     onClearSearch = () =>{

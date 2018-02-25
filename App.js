@@ -5,15 +5,15 @@ import { StackNavigator  } from 'react-navigation';
 import getTheme from './native-base-theme/components';
 import material from './native-base-theme/variables/material';
 
-//import NewsList from "./components/NewsList";
 import SingleNews from "./components/SingleNews";
 import NewsList from "./components/NewsList/NewsList";
+import NewsListsScreen from "./components/NewsListsScreen";
 
 
 type Props = {};
 const  AppNavigator = StackNavigator({
     NewsList: {
-        screen: NewsList,
+        screen: NewsListsScreen,
     },
     SingleNews: {
         screen: SingleNews,
