@@ -7,7 +7,7 @@ import {
     View,
     TouchableOpacity,
     TouchableHighlight,
-    ActivityIndicator
+    ActivityIndicator, AsyncStorage
 } from 'react-native';
 import {
     Container,
@@ -41,7 +41,7 @@ import {OptimizedFlatList} from 'react-native-optimized-flatlist'
 import SearchBar from "./../SearchBar";
 import SingleNews from "./../SingleNews";
 import material from "../../native-base-theme/variables/material";
-
+import {removeItem} from './../../functions/savedNews'
 
 
 export default class NewsList extends React.Component {
@@ -67,17 +67,22 @@ export default class NewsList extends React.Component {
     }
 
     componentDidMount() {
-        if (!this.state.search) {
-            this.setState({
-                loading: true,
-                data: [],
-            },() => this.getSavedNewsList());
-        }
+
+        this.setState({
+            loading: true,
+            data: [],
+        },() => this.getSavedNewsList());
+
     };
 
 
-    getSavedNewsList = () => {
-        //todo getting saved
+    async getSavedNewsList() {
+        const savedList = await AsyncStorage.getItem('@TimenewsAppStore:savedNews');
+        this.setState({
+            loading: false,
+            refreshing: false,
+            data: JSON.parse(savedList)
+        });
     };
 
      onRefresh = () => {
@@ -178,6 +183,9 @@ class NewsItem extends React.PureComponent {
         this.props.onPressItem(this.props.item);
     };
 
+    onRemoveItem = (item) => {
+        removeItem(item, item.id)
+    }
     render() {
         return (
             <ListItem avatar onPress={() => this._onPress(this.props.item)}>
@@ -196,9 +204,9 @@ class NewsItem extends React.PureComponent {
                             <Icon name="more" style={{padding:10}}/>
                         </MenuTrigger>
                         <MenuOptions>
-                            <MenuOption onSelect={() => alert(`Delete`)} style={{flexDirection: 'row'}}>
-                                <Icon name="bookmark" style={styles.menuIcon}/>
-                                <Text style={styles.menuText}>Save</Text>
+                            <MenuOption onSelect={() => this.onRemoveItem(this.props.item)} style={{flexDirection: 'row'}}>
+                                <Icon name="trash" style={styles.menuIcon}/>
+                                <Text style={styles.menuText}>Remove</Text>
                             </MenuOption>
                             <MenuOption onSelect={() => alert("Share")} style={{flexDirection: 'row'}}>
                                 <Icon name="share"  style={styles.menuIcon}/>

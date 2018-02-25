@@ -228,12 +228,8 @@ class NewsItem extends React.PureComponent {
         this.props.onPressItem(this.props.item);
     };
 
-    onSaveItem = (uid) =>{
-        saveItem(uid)
-    };
-
-    onShareItem = (uid) =>{
-        getNewsList()
+    onSaveItem = (item) =>{
+        saveItem(item)
     };
 
     render() {
@@ -254,7 +250,7 @@ class NewsItem extends React.PureComponent {
                             <Icon name="more" style={{padding:10}}/>
                         </MenuTrigger>
                         <MenuOptions>
-                            <MenuOption onSelect={() => this.onSaveItem(this.props.item.uid)} style={{flexDirection: 'row'}}>
+                            <MenuOption onSelect={() => this.onSaveItem(this.props.item)} style={{flexDirection: 'row'}}>
                                 <Icon name="bookmark" style={styles.menuIcon}/>
                                 <Text style={styles.menuText}>Save</Text>
                             </MenuOption>
@@ -275,7 +271,8 @@ const styles = StyleSheet.create({
         fontSize: 14,
     },
     menuIcon:{
-        padding:5,
+        padding:5
+        ,
         color:material.brandPrimary,
         fontSize:16,
     },

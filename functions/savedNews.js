@@ -1,9 +1,42 @@
 import {AsyncStorage} from "react-native";
 
-export async function saveItem(uid) {
+export async function saveItem(item) {
     try {
-        const myArray = await AsyncStorage.setItem('@TimenewsStore:savedNews', uid);
-        console.log(myArray)
+        //await AsyncStorage.clear();
+        const oldSaved = await AsyncStorage.getItem('@TimenewsAppStore:savedNews');
+        let oldSavedArray = JSON.parse(oldSaved);
+        if(!oldSavedArray){
+            oldSavedArray = [];
+        }
+        item.original_content = null;
+
+        const newArray = [...oldSavedArray, item];
+        await AsyncStorage.setItem('@TimenewsAppStore:savedNews', JSON.stringify(newArray));
+    } catch (error) {
+        // Error saving data
+    }
+}
+
+export async function removeItem(item, id) {
+    try {
+        const oldSaved = await AsyncStorage.getItem('@TimenewsAppStore:savedNews');
+
+        let oldSavedArray = JSON.parse(oldSaved);
+        if(!oldSavedArray){
+            oldSavedArray = [];
+        }
+
+
+        for(let i = oldSavedArray.length; i >= 0; i--){
+            if(oldSavedArray[i].id === item.id){
+                console.log(i)
+                console.log(item.id)
+                oldSavedArray.slice(i,1)
+            }
+        }
+
+
+        await AsyncStorage.setItem('@TimenewsAppStore:savedNews', JSON.stringify(oldSavedArray));
     } catch (error) {
         // Error saving data
     }
@@ -11,8 +44,8 @@ export async function saveItem(uid) {
 
 export async function getNewsList() {
     try {
-        const myArray = await AsyncStorage.getItem('@TimenewsStore:savedNews');
-        console.log(myArray)
+        //return await AsyncStorage.getItem('@TimenewsAppStore:savedNews');
+        //return saved;
     } catch (error) {
         // Error saving data
     }
