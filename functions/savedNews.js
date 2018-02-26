@@ -26,16 +26,11 @@ export async function removeItem(item, id) {
             oldSavedArray = [];
         }
 
-
-        for(let i = oldSavedArray.length; i >= 0; i--){
+        for(let i = oldSavedArray.length-1; i >= 0; i--){
             if(oldSavedArray[i].id === item.id){
-                console.log(i)
-                console.log(item.id)
-                oldSavedArray.slice(i,1)
+                oldSavedArray.splice(i,1)
             }
         }
-
-
         await AsyncStorage.setItem('@TimenewsAppStore:savedNews', JSON.stringify(oldSavedArray));
     } catch (error) {
         // Error saving data

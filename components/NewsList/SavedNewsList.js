@@ -67,12 +67,10 @@ export default class NewsList extends React.Component {
     }
 
     componentDidMount() {
-
         this.setState({
             loading: true,
             data: [],
         },() => this.getSavedNewsList());
-
     };
 
 
@@ -85,13 +83,24 @@ export default class NewsList extends React.Component {
         });
     };
 
+    onRemoveItem(){
+        this.setState(
+            {
+                loading: true,
+                refreshing: true,
+                data: [],
+            },
+            () => {
+                this.getSavedNewsList();
+            }
+        );
+    }
+
      onRefresh = () => {
         this.setState(
             {
-                page: 1,
+                loading: true,
                 data: [],
-                seed: this.state.seed + 1,
-                refreshing: true
             },
             () => {
                 this.getSavedNewsList();
@@ -153,6 +162,7 @@ export default class NewsList extends React.Component {
             onPressItem={this.showItem}
             //selected={!!this.state.selected.get(item.id)}
             item={item}
+            handelRefresh={this.getSavedNewsList}
         />
     );
 
@@ -180,15 +190,16 @@ export default class NewsList extends React.Component {
 
 class NewsItem extends React.PureComponent {
     _onPress = (item) => {
-        this.props.onPressItem(this.props.item);
+       this.props.onPressItem(this.props.item);
     };
 
     onRemoveItem = (item) => {
-        removeItem(item, item.id)
-    }
+        removeItem(item, item.id);
+        this.props.handelRefresh()
+    };
     render() {
         return (
-            <ListItem avatar onPress={() => this._onPress(this.props.item)}>
+            <ListItem key={this.props.item.id} avatar onPress={() => this._onPress(this.props.item)}>
                 <Thumbnail square style={{width: 100}} source={{uri: this.props.item.enclosureUrl}}/>
                 <Body noBorder>
                 <Text style={{fontSize: 14}} numberOfLines={3}>{this.props.item.title}</Text>
